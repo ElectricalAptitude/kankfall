@@ -21,7 +21,7 @@ from builtins import int
 debug = True
 weAreLive = True
 kankaURL = "https://kanka.io/api/1.0/campaigns/24183/"
-scryfallURL = "https://api.scryfall.com/cards/search?q="
+scry_API_URL = "https://api.scryfall.com/cards/search?q="
 #don't do magic numbers kids they're bad for you
 kaladeshLocationID = 174953
 ravnicaLocationID = 174971
@@ -29,7 +29,7 @@ therosLocationID = 176830
 kaladeshTagID = 54084
 ravnicaTagID = 54085
 therosTagID = 54177
-kankfallTagID = 55903
+kankfall_TagID = 55903
 raceIDs = {"Aetherborn":67177, "Centaur":67037, "Construct":68699, "Dwarf":67077, "Elf":67493, "Goblin":66961, "Human":66977, "Vedalken":66954}
 #TODO: moar races!
 
@@ -49,29 +49,25 @@ kankaHeaders={"Authorization":"Bearer "+myToken, "Content-type":"application/jso
 while True:
     #run program
     #initialize variables at the start of each run
-    cardName = cardSet = cardArtist = cardImgurl = cardFlavor = cardTypeLine = cardTypeParts = cardType = cardSubtype = kankaType = ""
-    selectedCard = {}
-    planeLocationID = 0
-    entryLocation = 0
-    tags = [kankfallTagID]
-    thisURL = ""
-    kankaPayload = {}
-    postResult = ""
+    scry_Name = scry_Set = scry_Artist = scry_Imgurl = scry_Flavor = scry_TypeLine = scry_TypeParts = scry_Type = scry_Subtype = kankaType = ""
+    scry_Card = {}
+    kanka_plane_location_ID = 0
+    kanka_entry_Location = 0
+    # not sure to do with this ^
+    tags = [kankfall_TagID]
+    kanka_POST_URL = ""
+    kanka_Payload = {}
+    kanka_postResult = ""
 
-    desiredCardName = input("Type in the name of the card: ") # in python 3, input gives us a str automatically
-    desiredCardName = desiredCardName.replace(" ", "+")
-    desiredURL = "https://api.scryfall.com/cards/search?q="+desiredCardName+"&unique=prints"
+    # gaze upon the waters
 
-''' per issue #4, my proposed rework of the above:
+    scry_query = input("Type in the name of the card: ") # in python 3, input gives us a str automatically
+    scry_query = scry_query.replace(" ", "+")
+    scry_URL = scry_API_URL+scry_query+"&unique=prints"
 
-scry_query = input("Type in the name of the card: ") # in python 3, input gives us a str automatically
-scry_query = scry_query.replace(" ", "+")
-scry_URL = scryfallURL+scry_query+"&unique=prints"
 
-'''
-
-    httpResult = requests.get(desiredURL) #returns a dict with one entry, 'data', whose data is an array of dicts, each of which is one card.
-    if httpResult.ok==False:
+    scry_Result = requests.get(scry_URL) #returns a dict with one entry, 'data', whose data is an array of dicts, each of which is one card.
+    if scry_Result.ok==False:
         print(str(httpResult.status_code)+": "+httpResult.reason)
         continue
     resultJson=httpResult.json()["data"] #so resultJson is an array of some number of dicts
