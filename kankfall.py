@@ -51,7 +51,7 @@ while True:
     selectedCard = {}
     planeLocationID = 0
     entryLocation = 0
-    tags = ['55903']
+    tags = [kankfallTagID]
     thisURL = ""
     kankaPayload = {}
     postResult = ""
