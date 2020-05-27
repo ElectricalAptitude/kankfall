@@ -28,7 +28,7 @@ kaladeshTagID = 54084
 ravnicaTagID = 54085
 therosTagID = 54177
 kankfallTagID = 55903
-raceIDs = {"Aetherborn":67177, "Construct":68699, "Dwarf":67077, "Elf":67493, "Human":66977, "Vedalken":66954}
+raceIDs = {"Aetherborn":67177, "Centaur":67037, "Construct":68699, "Dwarf":67077, "Elf":67493, "Goblin":66961, "Human":66977, "Vedalken":66954}
 #TODO: moar races!
 
 ravnicaSets = ("Ravnica: City of Guilds", "Guildpact", "Dissension", "Return to Ravnica", "Guilds of Ravnica", "Ravnica Allegiance", "War of the Spark", "Gatecrash", "Dragon’s Maze", "Duel Decks: Izzet vs. Golgari", "Guilds of Ravnica Mythic Edition", "Ravnica Allegiance Mythic Edition", "War of the Spark Mythic Edition", "Guilds of Ravnica Guild Kits", "Ravnica Allegiance Guild Kits")
