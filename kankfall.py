@@ -1,18 +1,16 @@
-# A simply Python script to pull data regarding cards from Scryfall.com and input them as entities into kanka.io 
-# Open Source blah blah blah Creative Commons blah blah GNU License blah blah Wizards of the Coast Fan Content Policy blah
-
 '''
 Created on May 27, 2020
 
-@author: ElectricalAptitude
-@author: 
+@author: ElectricalAptit
+@author: zschuetz
 
 @change 2020.05.27 zschuetz ported from https://repl.it/@ElectricalAptit/kankfall#main.py so as to test Kanka interactions without making the API key quite so public.
+# credit for "do you even POST, bro?" goes to https://www.w3schools.com/python/ref_requests_post.asp 
 '''
 
 import requests
-import json
 from builtins import int
+# import other stuff??
 
 # important test cases: gibberish, forest, Arcbound Ravager, Baral, snow-covered swamp, Armor of Faith, Kaervek's Torch
 # bluh bluh python doesn't support multiline comments
@@ -31,17 +29,25 @@ ravnicaTagID = 54085
 therosTagID = 54177
 raceIDs = {"Aetherborn":67177, "Construct":68699, "Dwarf":67077, "Elf":67493, "Human":66977, "Vedalken":66954}
 #TODO: moar races!
+
+ravnicaSets = ("Ravnica: City of Guilds", "Guildpact", "Dissension", "Return to Ravnica", "Guilds of Ravnica", "Ravnica Allegiance", "War of the Spark", "Gatecrash", "Dragon’s Maze", "Duel Decks: Izzet vs. Golgari", "Guilds of Ravnica Mythic Edition", "Ravnica Allegiance Mythic Edition", "War of the Spark Mythic Edition", "Guilds of Ravnica Guild Kits", "Ravnica Allegiance Guild Kits")
+kaladeshSets = ("Kaladesh", "Aether Revolt", "Masterpiece Series: Kaladesh Inventions")
+therosSets = ("Theros", "Born of the Gods", "Journey into Nyx", "Theros Beyond Death")
+
 kankaCharacterURL = kankaURL+"characters" #no slash, cap'n
 kankaItemURL = kankaURL+"items"
 kankaLocationURL = kankaURL+"locations"
-myToken = abc123
-# credit for "do you even POST, bro?" goes to https://www.w3schools.com/python/ref_requests_post.asp 
+
+myToken = "abc123"
+with open("cfg/token.auth") as tokenFile:
+    myToken = tokenFile.read() 
 kankaHeaders={"Authorization":"Bearer "+myToken, "Content-type":"application/json"}
 
 while True:
     #run program
     #initialize variables at the start of each run
     cardName = cardSet = cardArtist = cardImgurl = cardFlavor = cardTypeLine = cardTypeParts = cardType = cardSubtype = kankaType = ""
+    selectedCard = {}
     planeLocationID = 0
     entryLocation = 0
     tags = []
@@ -51,24 +57,32 @@ while True:
 
     desiredCardName = input("Type in the name of the card: ") # in python 3, input gives us a str automatically
     desiredCardName = desiredCardName.replace(" ", "+")
-    desiredURL = "https://api.scryfall.com/cards/named?fuzzy="+desiredCardName
+    desiredURL = "https://api.scryfall.com/cards/search?q="+desiredCardName+"&unique=prints"
 
-    httpResult = requests.get(desiredURL)
+    httpResult = requests.get(desiredURL) #returns a dict with one entry, 'data', whose data is an array of dicts, each of which is one card.
     if httpResult.ok==False:
         print(str(httpResult.status_code)+": "+httpResult.reason)
         continue
-
-    cardJSON = httpResult.json()
-    
-
-    cardName = cardJSON['name']
-    cardSet = cardJSON['set_name']
-    cardImgurl = cardJSON['image_uris']['art_crop'] 
-    if "flavor_text" in cardJSON:
-        cardFlavor = cardJSON['flavor_text']
-    if "artist" in cardJSON:
-        cardArtist = cardJSON['artist']
-    cardTypeLine = cardJSON['type_line']
+    resultJson=httpResult.json()['data'] #so resultJson is an array of some number of dicts
+    print("Cards were found from the following sets:")
+    currentCardIndex = 0
+    for card in resultJson: #card here is now an actual card
+        thisCardSet = card["set_name"]
+        print("["+str(currentCardIndex)+"]: "+thisCardSet)
+        if thisCardSet in ravnicaSets or thisCardSet in kaladeshSets or thisCardSet in therosSets:
+            selectedCard = card
+            break            
+        currentCardIndex += 1
+    if selectedCard == {}: continue #if no matches, try again
+    print("Selected card number "+str(currentCardIndex))
+    cardName = selectedCard['name']
+    cardSet = selectedCard['set_name']
+    cardImgurl = selectedCard['image_uris']['art_crop'] 
+    if "flavor_text" in selectedCard:
+        cardFlavor = selectedCard['flavor_text']
+    if "artist" in selectedCard:
+        cardArtist = selectedCard['artist']
+    cardTypeLine = selectedCard['type_line']
     cardTypeParts = cardTypeLine.split("—")
     cardType = cardTypeParts[0].strip()
     if len(cardTypeParts) > 1: 
@@ -104,14 +118,14 @@ while True:
         continue 
 
     # For all cards, a valid question is: which setting? 
-    if cardSet in ("Kaladesh", "Aether Revolt", "Masterpiece Series: Kaladesh Inventions"):
+    if cardSet in kaladeshSets:
         planeLocationID = kaladeshLocationID
         tags.append(kaladeshTagID)
     #TODO: there are quite a few more Ravnica ones
-    elif cardSet in ("Return to Ravnica", "Gatecrash", "Dragon's Maze"):
+    elif cardSet in (ravnicaSets):
         planeLocationID = ravnicaLocationID
         tags.append(ravnicaTagID)
-    elif cardSet in ("Theros", "Born of the Gods", "Journey into Nyx", "Theros Beyond Death"):
+    elif cardSet in therosSets:
         planeLocationID = therosLocationID
         tags.append(therosTagID)
     # turns out you can't do if statements inside a constructor, which means this field needs to be validated up here
@@ -129,7 +143,7 @@ while True:
         locationDetermined = False
         while locationDetermined == False:
             print("Include a location?")
-            locationAnswer = input("Input location ID for custom, Y to use the default location for the plane the card was found on, or N for no location.")
+            locationAnswer = input("Input location ID for custom, Y to use the default location for the plane the card was found on, or N for no location: ")
             locationDetermined = True #give them the benefit of the doubt
             if locationAnswer.lower() == "n":
                 print("Understood. No location will be specified.")
@@ -169,7 +183,7 @@ while True:
         charTitle = cardSubtype.replace(race, "", 1).strip()
         
         while charType == "":
-            charTypeResponse = input("Character type? M for Model, I for Individual (awaiting customization), anything else will be input directly.)")
+            charTypeResponse = input("Character type? M for Model, I for Individual (awaiting customization), anything else will be input directly: ")
             if charTypeResponse.lower() == "m":
                 charType = "Model"
             elif charTypeResponse.lower() == "i":
@@ -250,14 +264,14 @@ while True:
     
 
     # PUSH THE BIG RED BUTTON
-    # NOT YET BALOO
-    if weAreLive:
+    if weAreLive: #I'm gone, baby, solid gone.
+        print("Submitting...")
         postResult = requests.post(thisURL, headers=kankaHeaders, json=kankaPayload)
         # So, how did it gooooooooo?
         print(postResult.status_code, postResult.reason)
         if postResult.ok:
             print(postResult.text)
-    else:
+    else: # NOT YET BALOO
         print(thisURL)
         print(kankaHeaders)
         print(kankaPayload)
@@ -272,6 +286,3 @@ while True:
     # TODO: some kind of condition for not doing it again I guess
     # break
     #end of program main loop
-
-
-    
