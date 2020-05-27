@@ -64,7 +64,7 @@ while True:
     if httpResult.ok==False:
         print(str(httpResult.status_code)+": "+httpResult.reason)
         continue
-    resultJson=httpResult.json()['data'] #so resultJson is an array of some number of dicts
+    resultJson=httpResult.json()["data"] #so resultJson is an array of some number of dicts
     print("Cards were found from the following sets:")
     currentCardIndex = 0
     for card in resultJson: #card here is now an actual card
@@ -76,14 +76,14 @@ while True:
         currentCardIndex += 1
     if selectedCard == {}: continue #if no matches, try again
     print("Selected card number "+str(currentCardIndex))
-    cardName = selectedCard['name']
-    cardSet = selectedCard['set_name']
-    cardImgurl = selectedCard['image_uris']['art_crop']
+    cardName = selectedCard["name"]
+    cardSet = selectedCard["set_name"]
+    cardImgurl = selectedCard["image_uris"]["art_crop"]
     if "flavor_text" in selectedCard:
-        cardFlavor = selectedCard['flavor_text']
+        cardFlavor = selectedCard["flavor_text"]
     if "artist" in selectedCard:
-        cardArtist = selectedCard['artist']
-    cardTypeLine = selectedCard['type_line']
+        cardArtist = selectedCard["artist"]
+    cardTypeLine = selectedCard["type_line"]
     cardTypeParts = cardTypeLine.split("—")
     cardType = cardTypeParts[0].strip()
     if len(cardTypeParts) > 1:
@@ -162,8 +162,8 @@ while True:
     def createKankaCharacter():
         # these need to be initialized every time, hence them being defined here
         # incoming data includes: tags[], cardName, cardFlavor, cardImgurl, cardSubtype
-        personalityName=['Attitude', 'Values', 'Accent', 'Renown'] #we might want to change that per-card later
-        personalityEntry=['Unknown', 'Unknown', 'Unknown', 'Unknown'] #ditto
+        personalityName=["Attitude", "Values", "Accent", "Renown"] #we might want to change that per-card later
+        personalityEntry=["Unknown", "Unknown", "Unknown", "Unknown"] #ditto
         race=""
         raceID = 0
         charTitle = ""
@@ -197,22 +197,22 @@ while True:
 
 
         kankaCharacter = {
-            'name' : cardName,
-            'title': charTitle,
-        #    'age' : '',
-        #    'sex' : '',
-            'entry' : cardFlavor + "<p>Behavior so far: None</p><br><br><small>Artist Credit: "+cardArtist+"</small>",
-            'type' : charType,
-        #    'family_id' : '',
-            'tags' : tags,
-            'is_dead' : False,
-            'is_private' : False,
-            'image_url' : cardImgurl,
-            'personalityName' : personalityName,
-            'personalityEntry' : personalityEntry
+            "name" : cardName,
+            "title": charTitle,
+        #    "age" : "",
+        #    "sex" : "",
+            "entry" : cardFlavor + "<p>Behavior so far: None</p><br><br><small>Artist Credit: "+cardArtist+"</small>",
+            "type" : charType,
+        #    "family_id" : "",
+            "tags" : tags,
+            "is_dead" : False,
+            "is_private" : False,
+            "image_url" : cardImgurl,
+            "personalityName" : personalityName,
+            "personalityEntry" : personalityEntry
             }
         if raceID > 0:
-            kankaCharacter.update({'race_id' : raceID})
+            kankaCharacter.update({"race_id" : raceID})
         entryLocation = determineEntryLocation()
         if entryLocation > 0:
             kankaCharacter.update({"location_id":entryLocation})
@@ -223,12 +223,12 @@ while True:
 
     def createKankaItem():
         kankaItem = {
-            'name' : cardName,
-            'entry' : cardFlavor + "<br><br><small>Artist Credit: "+cardArtist+"</small>",
-        #    'character_id' : , # int - the item's owner
-            'tags' : tags,
-            'is_private' : False,
-            'image_url' : cardImgurl
+            "name" : cardName,
+            "entry" : cardFlavor + "<br><br><small>Artist Credit: "+cardArtist+"</small>",
+        #    "character_id" : , # int - the item"s owner
+            "tags" : tags,
+            "is_private" : False,
+            "image_url" : cardImgurl
             }
         if cardSubtype != "":
             kankaItem.update({"type":cardSubtype})
@@ -239,11 +239,11 @@ while True:
 
     def createKankaLocation():
         kankaLocation = {
-            'name' : cardName,
-            'entry' : cardFlavor + "<br><br><small>Artist Credit: "+cardArtist+"</small>",
-            'tags' : tags,
-            'is_private' : False,
-            'image_url' : cardImgurl,
+            "name" : cardName,
+            "entry" : cardFlavor + "<br><br><small>Artist Credit: "+cardArtist+"</small>",
+            "tags" : tags,
+            "is_private" : False,
+            "image_url" : cardImgurl,
             }
         if cardSubtype != "":
             kankaLocation.update({"type":cardSubtype})
