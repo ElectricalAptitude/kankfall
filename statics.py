@@ -18,3 +18,8 @@ KANKFALL_TAG = 55903
 
 # Races
 RACES = {"Aetherborn":67177, "Centaur":67037, "Construct":68699, "Dwarf":67077, "Elf":67493, "Goblin":66961, "Human":66977, "Vedalken":66954}
+
+# Sets
+RAVNICA_SETS = ("Ravnica: City of Guilds", "Guildpact", "Dissension", "Return to Ravnica", "Guilds of Ravnica", "Ravnica Allegiance", "War of the Spark", "Gatecrash", "Dragon’s Maze", "Duel Decks: Izzet vs. Golgari", "Guilds of Ravnica Mythic Edition", "Ravnica Allegiance Mythic Edition", "War of the Spark Mythic Edition", "Guilds of Ravnica Guild Kits", "Ravnica Allegiance Guild Kits")
+KALADESH_SETS = ("Kaladesh", "Aether Revolt", "Masterpiece Series: Kaladesh Inventions")
+THEROS_SETS = ("Theros", "Born of the Gods", "Journey into Nyx", "Theros Beyond Death")
