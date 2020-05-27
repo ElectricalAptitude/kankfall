@@ -7,7 +7,7 @@ ATM, this module is proposed, and not in production
 
 # API URLs
 KANKA_URL = "https://kanka.io/api/1.0/campaigns/24183/"
-SCRYFALL_URL = "https://api.scryfall.com/cards/"
+SCRYFALL_URL = "https://api.scryfall.com/cards/search?q="
 
 KANKA_CHAR_URL = KANKA_URL+"characters" #no slash, cap'n
 KANKA_ITEM_URL = KANKA_URL+"items"

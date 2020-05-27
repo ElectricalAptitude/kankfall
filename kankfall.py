@@ -10,6 +10,8 @@ Created on May 27, 2020
 
 import requests
 from builtins import int
+# import statics
+# import json
 # import other stuff??
 
 # important test cases: gibberish, forest, Arcbound Ravager, Baral, snow-covered swamp, Armor of Faith, Kaervek's Torch
@@ -19,7 +21,7 @@ from builtins import int
 debug = True
 weAreLive = True
 kankaURL = "https://kanka.io/api/1.0/campaigns/24183/"
-scryfallURL = "https://api.scryfall.com/cards/"
+scryfallURL = "https://api.scryfall.com/cards/search?q="
 #don't do magic numbers kids they're bad for you
 kaladeshLocationID = 174953
 ravnicaLocationID = 174971
@@ -59,6 +61,14 @@ while True:
     desiredCardName = input("Type in the name of the card: ") # in python 3, input gives us a str automatically
     desiredCardName = desiredCardName.replace(" ", "+")
     desiredURL = "https://api.scryfall.com/cards/search?q="+desiredCardName+"&unique=prints"
+
+''' per issue #4, my proposed rework of the above:
+
+scry_query = input("Type in the name of the card: ") # in python 3, input gives us a str automatically
+scry_query = scry_query.replace(" ", "+")
+scry_URL = scryfallURL+scry_query+"&unique=prints"
+
+'''
 
     httpResult = requests.get(desiredURL) #returns a dict with one entry, 'data', whose data is an array of dicts, each of which is one card.
     if httpResult.ok==False:
