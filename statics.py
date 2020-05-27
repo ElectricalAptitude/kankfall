@@ -5,6 +5,14 @@ Riffing on the suggestions from https://www.programiz.com/python-programming/var
 ATM, this module is proposed, and not in production
 '''
 
+# API URLs
+KANKA_URL = "https://kanka.io/api/1.0/campaigns/24183/"
+SCRYFALL_URL = "https://api.scryfall.com/cards/"
+
+KANKA_CHAR_URL = KANKA_URL+"characters" #no slash, cap'n
+KANKA_ITEM_URL = KANKA_URL+"items"
+KANKA_LOC_URL = KANKA_URL+"locations"
+
 # Locations
 KALADESH_LOC = 174953
 RAVNICA_LOC = 174971
