@@ -1,30 +1,19 @@
 # For creating random characters in Kaladesh, Ravnica, or therosSets
 
+import statics
 from pick import pick
-from random import randint
+import random
 
 # initialize all the variables!
 newChar = {
     "plane":0,
     "race":0,
     "pronouns":0,
-    "type":0
+    "type":0,
     }
 
-pronouns = 
-
-def roll(roll):
-
-    rolling = []
-
-    try:
-        for x in range(int(roll.split('d')[0])):
-            rolling.append(randint(1,int(roll.split('d')[1])))
-    except Exception as err:
-        print(f'I got bungled @_@ \n Error: {err}')
-
-    print(f'You rolled {" ".join(str(x) for x in rolling)} which has a total'
-          f' of {sum(rolling)}')
+# Pronouns
+pronouns = ("she/her","he/him","they/them")
 
 # we're selecting which tables to use for creating a new random character
 def chooseTable:
@@ -42,21 +31,27 @@ def chooseTable:
         print(planeChoice)
         tableDetermined == True
 
+def raceRolls:
+    raceRoll = 0
+    # kaladesh_NPC_table = ("Aetherborn","Construct","Dwarf","Elf","Human","Vedalken")
+    #
+    # kaladesh_contact_table
 
 def genderRolls:
-    if newChar.race == :
-        newChar.gender = 1
-    elif newChar in elf and newChar !in drow:
-        roll 1d3
-1 - male
-2 - female
-3 - enby
-else:
-roll 1d100
-1-45 - female
-45-90 - male
-91-100 - enby
-
-
-
-    if newChar.type.lower() == "" or
+    genderRoll = 0
+    enbyRaces = ("Construct","Warforged")
+    elfyRaces = ("Elf","Half Elf","High Elf")
+    if newChar.race in enbyRaces:
+        newChar.pronouns = 0
+    elif newChar.race in elfyRaces:
+        genderRoll = random.choice(pronouns)
+    else:
+        genderRoll = roll(1d100)
+        if genderRol1 in range(1-10):
+            newChar.pronouns = 2
+        elif genderRoll in range(11-55):
+            newChar.pronouns = 0
+        else:
+            newChar.pronouns = 1
+    continue
+#    if newChar.type.lower() == "" or
