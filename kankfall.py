@@ -1,11 +1,13 @@
 '''
-Created on May 27, 2020
+A Python script that uses data from Scryfall to automatically import MtG cards into Kanka.io. (Trademarks belong to their respective owners; see accompanying documentation for more detail.)
 
+Credit for "do you even POST, bro?" goes to https://www.w3schools.com/python/ref_requests_post.asp 
 @author: ElectricalAptitude
 @author: zschuetz
 
+@created 2020.05.27
 @change 2020.05.27 zschuetz ported from https://repl.it/@ElectricalAptit/kankfall#main.py so as to test Kanka interactions without making the API key quite so public.
-# credit for "do you even POST, bro?" goes to https://www.w3schools.com/python/ref_requests_post.asp
+
 '''
 
 import requests
@@ -33,7 +35,7 @@ kankfallTagID = 55903
 raceIDs = {"Aetherborn":67177, "Centaur":67037, "Construct":68699, "Dwarf":67077, "Elf":67493, "Goblin":66961, "Human":66977, "Vedalken":66954}
 #TODO: moar races!
 
-ravnicaSets = ("Ravnica: City of Guilds", "Guildpact", "Dissension", "Return to Ravnica", "Guilds of Ravnica", "Ravnica Allegiance", "War of the Spark", "Gatecrash", "Dragonâ€™s Maze", "Duel Decks: Izzet vs. Golgari", "Guilds of Ravnica Mythic Edition", "Ravnica Allegiance Mythic Edition", "War of the Spark Mythic Edition", "Guilds of Ravnica Guild Kits", "Ravnica Allegiance Guild Kits")
+ravnicaSets = ("Ravnica: City of Guilds", "Guildpact", "Dissension", "Return to Ravnica", "Guilds of Ravnica", "Ravnica Allegiance", "War of the Spark", "Gatecrash", "Dragon’s Maze", "Duel Decks: Izzet vs. Golgari", "Guilds of Ravnica Mythic Edition", "Ravnica Allegiance Mythic Edition", "War of the Spark Mythic Edition", "Guilds of Ravnica Guild Kits", "Ravnica Allegiance Guild Kits")
 kaladeshSets = ("Kaladesh", "Aether Revolt", "Masterpiece Series: Kaladesh Inventions")
 therosSets = ("Theros", "Born of the Gods", "Journey into Nyx", "Theros Beyond Death")
 
@@ -53,7 +55,7 @@ while True:
     selectedCard = {}
     planeLocationID = 0
     entryLocation = 0
-    tags = [kankfallTagID]
+    tags = []
     thisURL = ""
     kankaPayload = {}
     postResult = ""
@@ -62,6 +64,7 @@ while True:
     desiredCardName = desiredCardName.replace(" ", "+")
     desiredURL = "https://api.scryfall.com/cards/search?q="+desiredCardName+"&unique=prints"
 
+<<<<<<< Upstream, based on branch 'master' of https://github.com/ElectricalAptitude/kankfall
 ''' per issue #4, my proposed rework of the above:
 
 scry_query = input("Type in the name of the card: ") # in python 3, input gives us a str automatically
@@ -71,6 +74,9 @@ scry_URL = scryfallURL+scry_query+"&unique=prints"
 '''
 
     httpResult = requests.get(desiredURL) #returns a dict with one entry, 'data', whose data is an array of dicts, each of which is one card.
+=======
+    httpResult = requests.get(desiredURL) #returns a dict with one entry, "data", whose data is an array of dicts, each of which is one card.
+>>>>>>> 1b7ca6f Setting up Git and reconciling with Master for future version control. 
     if httpResult.ok==False:
         print(str(httpResult.status_code)+": "+httpResult.reason)
         continue
@@ -94,7 +100,7 @@ scry_URL = scryfallURL+scry_query+"&unique=prints"
     if "artist" in selectedCard:
         cardArtist = selectedCard["artist"]
     cardTypeLine = selectedCard["type_line"]
-    cardTypeParts = cardTypeLine.split("â€”")
+    cardTypeParts = cardTypeLine.split("—")
     cardType = cardTypeParts[0].strip()
     if len(cardTypeParts) > 1:
         cardSubtype = cardTypeParts[1].strip()
@@ -176,7 +182,7 @@ scry_URL = scryfallURL+scry_query+"&unique=prints"
         personalityEntry=["Unknown", "Unknown", "Unknown", "Unknown"] #ditto
         race=""
         raceID = 0
-        charTitle = ""
+        charTitle = ""  # @UnusedVariable (not really, I just don't trust it to re-initialize properly otherwise)
         charType = ""
 
         # The first word of the creature subtype has a decent chance of being the race, with one exception
@@ -205,7 +211,6 @@ scry_URL = scryfallURL+scry_query+"&unique=prints"
                 charType = charTypeResponse
             # end loop - successfully setting charType moves on
 
-
         kankaCharacter = {
             "name" : cardName,
             "title": charTitle,
@@ -230,12 +235,11 @@ scry_URL = scryfallURL+scry_query+"&unique=prints"
 
     # now on to items
 
-
     def createKankaItem():
         kankaItem = {
             "name" : cardName,
             "entry" : cardFlavor + "<br><br><small>Artist Credit: "+cardArtist+"</small>",
-        #    "character_id" : , # int - the item"s owner
+        #    "character_id" : , # int - the item's owner
             "tags" : tags,
             "is_private" : False,
             "image_url" : cardImgurl
@@ -272,7 +276,7 @@ scry_URL = scryfallURL+scry_query+"&unique=prints"
     elif kankaType == "Item":
         kankaPayload = createKankaItem()
         thisURL = kankaItemURL
-
+    
 
     # PUSH THE BIG RED BUTTON
     if weAreLive: #I'm gone, baby, solid gone.
