@@ -3,45 +3,50 @@ A Python script that uses data from Scryfall to automatically import MtG cards i
 
 Credit for "do you even POST, bro?" goes to https://www.w3schools.com/python/ref_requests_post.asp 
 @author: ElectricalAptitude
-@author: zschuetz
+@author: SirTechSpec
 
 @created 2020.05.27
-@change 2020.05.27 zschuetz ported from https://repl.it/@ElectricalAptit/kankfall#main.py so as to test Kanka interactions without making the API key quite so public.
+@change 2020.05.27 sts ported from https://repl.it/@ElectricalAptit/kankfall#main.py so as to test Kanka interactions without making the API key quite so public.
+@change 2020.05.27 sts fixed git nonsense; set to UTF-8; adjustments to pull from constants.py
 
 '''
 
-import requests
 from builtins import int
-# import statics
-# import json
+import requests
+import constants
+
+
 # import other stuff??
-
-# important test cases: gibberish, forest, Arcbound Ravager, Baral, snow-covered swamp, Armor of Faith, Kaervek's Torch
-# bluh bluh python doesn't support multiline comments
-
+# test cases: gibberish, forest, Arcbound Ravager, Baral, snow-covered swamp, Armor of Faith, Kaervek's Torch
 #set program constants
-debug = True
+debug = False
 weAreLive = True
-kankaURL = "https://kanka.io/api/1.0/campaigns/24183/"
-scryfallURL = "https://api.scryfall.com/cards/search?q="
+
+#import program constants from backup constants file
+SCRYFALL_URL = constants.SCRYFALL_URL
+RAVNICA_SETS = constants.RAVNICA_SETS
+KALADESH_SETS = constants.KALADESH_SETS
+THEROS_SETS = constants.THEROS_SETS
+
+KANKA_CHAR_URL = constants.KANKA_CHAR_URL
+KANKA_ITEM_URL = constants.KANKA_ITEM_URL
+KANKA_LOC_URL = constants.KANKA_LOC_URL
+#TODO: read from cfg if available, inc. which sets/locations to use
+#TODO: use parameters if available
+
 #don't do magic numbers kids they're bad for you
+#TODO: get location IDs straight from Kanka
 kaladeshLocationID = 174953
 ravnicaLocationID = 174971
 therosLocationID = 176830
+#TODO: get tag IDs straight from Kanka
 kaladeshTagID = 54084
 ravnicaTagID = 54085
 therosTagID = 54177
 kankfallTagID = 55903
+#TODO: get race IDs straight from Kanka
 raceIDs = {"Aetherborn":67177, "Centaur":67037, "Construct":68699, "Dwarf":67077, "Elf":67493, "Goblin":66961, "Human":66977, "Vedalken":66954}
-#TODO: moar races!
 
-ravnicaSets = ("Ravnica: City of Guilds", "Guildpact", "Dissension", "Return to Ravnica", "Guilds of Ravnica", "Ravnica Allegiance", "War of the Spark", "Gatecrash", "Dragon’s Maze", "Duel Decks: Izzet vs. Golgari", "Guilds of Ravnica Mythic Edition", "Ravnica Allegiance Mythic Edition", "War of the Spark Mythic Edition", "Guilds of Ravnica Guild Kits", "Ravnica Allegiance Guild Kits")
-kaladeshSets = ("Kaladesh", "Aether Revolt", "Masterpiece Series: Kaladesh Inventions")
-therosSets = ("Theros", "Born of the Gods", "Journey into Nyx", "Theros Beyond Death")
-
-kankaCharacterURL = kankaURL+"characters" #no slash, cap'n
-kankaItemURL = kankaURL+"items"
-kankaLocationURL = kankaURL+"locations"
 
 myToken = "abc123"
 with open("cfg/token.auth") as tokenFile:
@@ -56,34 +61,25 @@ while True:
     planeLocationID = 0
     entryLocation = 0
     tags = []
-    thisURL = ""
+    kanka_request_URL = ""
     kankaPayload = {}
     postResult = ""
 
     desiredCardName = input("Type in the name of the card: ") # in python 3, input gives us a str automatically
     desiredCardName = desiredCardName.replace(" ", "+")
-    desiredURL = "https://api.scryfall.com/cards/search?q="+desiredCardName+"&unique=prints"
+    scry_URL = SCRYFALL_URL+desiredCardName+"&unique=prints"
 
-<<<<<<< Upstream, based on branch 'master' of https://github.com/ElectricalAptitude/kankfall
-''' per issue #4, my proposed rework of the above:
-
-scry_query = input("Type in the name of the card: ") # in python 3, input gives us a str automatically
-scry_query = scry_query.replace(" ", "+")
-scry_URL = scryfallURL+scry_query+"&unique=prints"
-
-'''
-
-    httpResult = requests.get(desiredURL) #returns a dict with one entry, 'data', whose data is an array of dicts, each of which is one card.
-    if httpResult.ok==False:
-        print(str(httpResult.status_code)+": "+httpResult.reason)
+    scry_result = requests.get(scry_URL) #returns a dict with one entry, 'data', whose data is an array of dicts, each of which is one card.
+    if scry_result.ok==False:
+        print(str(scry_result.status_code)+": "+scry_result.reason)
         continue
-    resultJson=httpResult.json()["data"] #so resultJson is an array of some number of dicts
+    resultJson=scry_result.json()["data"] #so resultJson is an array of dicts (cards)
     print("Cards were found from the following sets:")
     currentCardIndex = 0
     for card in resultJson: #card here is now an actual card
         thisCardSet = card["set_name"]
         print("["+str(currentCardIndex)+"]: "+thisCardSet)
-        if thisCardSet in ravnicaSets or thisCardSet in kaladeshSets or thisCardSet in therosSets:
+        if thisCardSet in RAVNICA_SETS or thisCardSet in KALADESH_SETS or thisCardSet in THEROS_SETS:
             selectedCard = card
             break
         currentCardIndex += 1
@@ -97,7 +93,7 @@ scry_URL = scryfallURL+scry_query+"&unique=prints"
     if "artist" in selectedCard:
         cardArtist = selectedCard["artist"]
     cardTypeLine = selectedCard["type_line"]
-    cardTypeParts = cardTypeLine.split("—")
+    cardTypeParts = cardTypeLine.split("â€”")
     cardType = cardTypeParts[0].strip()
     if len(cardTypeParts) > 1:
         cardSubtype = cardTypeParts[1].strip()
@@ -114,15 +110,15 @@ scry_URL = scryfallURL+scry_query+"&unique=prints"
     if shallIContinue.lower() == "n" or shallIContinue.lower() == "no":
         continue #this means don't continue, start over
 
-    #Input's all finished, woo! Now to some business logic, starting with sorting.
+    #Card input's all finished, woo! Now to some sorting and preparing for output.
 
     #what manner of beastie are you
-    if cardType == "Artifact":
+    if cardType == "Artifact" or cardType == "Legendary Artifact":
         if cardSubtype == "Vehicle":
             kankaType = "Location"
         else:
             kankaType = "Item"
-    if "Creature" in cardType:
+    if "Creature" in cardType: #could be Artifact Creature, Legendary Creature, Enchantment Creature, or who knows what
         kankaType = "Character"
     if "Land" in cardType :
         kankaType = "Location"
@@ -132,14 +128,14 @@ scry_URL = scryfallURL+scry_query+"&unique=prints"
         continue
 
     # For all cards, a valid question is: which setting?
-    if cardSet in kaladeshSets:
+    if cardSet in KALADESH_SETS:
         planeLocationID = kaladeshLocationID
         tags.append(kaladeshTagID)
     #TODO: there are quite a few more Ravnica ones
-    elif cardSet in (ravnicaSets):
+    elif cardSet in (RAVNICA_SETS):
         planeLocationID = ravnicaLocationID
         tags.append(ravnicaTagID)
-    elif cardSet in therosSets:
+    elif cardSet in THEROS_SETS:
         planeLocationID = therosLocationID
         tags.append(therosTagID)
     # turns out you can't do if statements inside a constructor, which means this field needs to be validated up here
@@ -195,6 +191,11 @@ scry_URL = scryfallURL+scry_query+"&unique=prints"
 
         # replacing "" with "" should be no problem if we didn't find a race
         charTitle = cardSubtype.replace(race, "", 1).strip()
+        if debug:
+            print(cardType)
+            print(cardSubtype, "-->", raceCandidate, "-->", race, ": ", raceID)
+            print(charTitle)
+            input()
 
         while charType == "":
             charTypeResponse = input("Character type? M for Model, I for Individual (awaiting customization), anything else will be input directly: ")
@@ -266,29 +267,27 @@ scry_URL = scryfallURL+scry_query+"&unique=prints"
     #let's call some functions
     if kankaType == "Character":
         kankaPayload = createKankaCharacter()
-        thisURL = kankaCharacterURL
+        kanka_request_URL = KANKA_CHAR_URL
     elif kankaType == "Location":
         kankaPayload = createKankaLocation()
-        thisURL = kankaLocationURL
+        kanka_request_URL = KANKA_LOC_URL
     elif kankaType == "Item":
         kankaPayload = createKankaItem()
-        thisURL = kankaItemURL
+        kanka_request_URL = KANKA_ITEM_URL
     
 
     # PUSH THE BIG RED BUTTON
     if weAreLive: #I'm gone, baby, solid gone.
-        print("Submitting...")
-        postResult = requests.post(thisURL, headers=kankaHeaders, json=kankaPayload)
+        print("Submitting...") #acknowledge slight delay
+        postResult = requests.post(kanka_request_URL, headers=kankaHeaders, json=kankaPayload)
         # So, how did it gooooooooo?
         print(postResult.status_code, postResult.reason)
         if postResult.ok:
             print(postResult.text)
     else: # NOT YET BALOO
-        print(thisURL)
+        print(kanka_request_URL)
         print(kankaHeaders)
         print(kankaPayload)
-#        kankaResult = requests.get(kankaCharacterURL+"/182217", headers=kankaHeaders)
-#        print(str(kankaResult.status_code)+": "+kankaResult.reason)
 #        kankaJSON = kankaResult.json()
 #        kankaContents = kankaJSON["data"]
 #        for x in kankaContents:
