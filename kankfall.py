@@ -74,9 +74,6 @@ scry_URL = scryfallURL+scry_query+"&unique=prints"
 '''
 
     httpResult = requests.get(desiredURL) #returns a dict with one entry, 'data', whose data is an array of dicts, each of which is one card.
-=======
-    httpResult = requests.get(desiredURL) #returns a dict with one entry, "data", whose data is an array of dicts, each of which is one card.
->>>>>>> 1b7ca6f Setting up Git and reconciling with Master for future version control. 
     if httpResult.ok==False:
         print(str(httpResult.status_code)+": "+httpResult.reason)
         continue
