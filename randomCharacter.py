@@ -6,10 +6,10 @@ import random
 
 # initialize all the variables!
 newChar = {
-    "plane":0,
-    "race":0,
-    "pronouns":0,
-    "type":0,
+    "plane": "",
+    "race": "",
+    "pronouns":"",
+    "type": "",
     }
 
 # Pronouns
@@ -30,12 +30,17 @@ def chooseTable:
         planeChoice, planeIndex = pick(planeOptions, charPlane)
         print(planeChoice)
         tableDetermined == True
+    continue
 
 def raceRolls:
     raceRoll = 0
-    # kaladesh_NPC_table = ("Aetherborn","Construct","Dwarf","Elf","Human","Vedalken")
-    #
-    # kaladesh_contact_table
+    if planechoice = "Kaladesh":
+        kaladesh_npc_table = ("Aetherborn","Construct","Dwarf","Elf","Human","Vedalken")
+        kaladesh_npc_weights = [0.25,0.15,0.15,0.15,0.2,0.15]
+        kaladesh_npc_race = random.choices(kaladesh_npc_table, kaladesh_npc_weights, k = 1)
+    continue
+    # ravnica_contact_table = ()
+    # ravnica_contact_weights []
 
 def genderRolls:
     genderRoll = 0
@@ -54,4 +59,6 @@ def genderRolls:
         else:
             newChar.pronouns = 1
     continue
+
+newChar.race = kaladesh_npc_race
 #    if newChar.type.lower() == "" or
